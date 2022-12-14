@@ -5,6 +5,9 @@ import logging
 
 log = logging.getLogger(__name__)
 
+import copy #Used for deepcopy/copy
+from adjlist import AdjacencyList
+
 from math import inf
 
 def warshall(adjlist):
@@ -14,8 +17,27 @@ def warshall(adjlist):
 
     Pre: adjlist is not empty.
     '''
-    log.info("TODO: warshall()")
-    return [[]]
+    
+    
+    nodesize = adjlist.node_cardinality() #Stores number of nodes
+    matrix = [[None]*nodesize]*nodesize #Matrix for result
+    tempMatrix = copy.deepcopy(adjlist.adjacency_matrix())
+    
+    #Warshall alogrithm
+    for j in range(nodesize):
+        for i in range(nodesize):
+            if j == i:
+                tempMatrix[j][i] = 0
+            for k in range(nodesize):
+                tempMatrix[i][k] = min(tempMatrix[i][k], (tempMatrix[i][j] + tempMatrix[j][k]))
+                
+                
+    for i in range(nodesize):
+        matrix[i] = [False if x == inf else True for x in tempMatrix[i]]
+    
+    
+    
+    return matrix
 
 def floyd(adjlist):
     '''
@@ -53,8 +75,13 @@ def dijkstra(adjlist, start_node):
     e: [ None, 'a', 'a' ]
     '''
     log.info("TODO: dijkstra()")
-    d = []
-    e = []
+    d = [None] * adjlist.node_cardinality()
+    e = [None] * adjlist.node_cardinality()
+    
+    q = [] #temporary queue to to sort and pick a node for loop
+    s = [] #values that pop from q is stored here to order the nodes
+    
+    
     return d, e
 
 def prim(adjlist, start_node):

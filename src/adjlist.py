@@ -118,12 +118,13 @@ class AdjacencyList:
         
         
         #When name is smaller than the head value
-        if name < self.name:
+        if name < self.name():
             newHead = AdjacencyList(name, info)
+            return newHead.cons(self.head())
             
         #When it is larger
         else:
-            self.cons(self.tail.add_node(name, info))
+            self.cons(self.tail().add_node(name, info))
             
             
         return self.head()
@@ -190,9 +191,16 @@ class AdjacencyList:
         Pre: `dst` is a member of this adjacency list.
         '''
         
-        if not self.find_node(dst):
+        if self.head().is_empty():
             return self.head()
-        return self._add_edge(src, dst, weight)
+        if src == self.name():
+            self.set_edges(self.edges().add(dst, weight))
+            
+        elif src > self.name():
+            self.tail()._add_edge(src, dst, weight)
+            
+            
+        return self.head()
         
        
 
@@ -228,23 +236,37 @@ class AdjacencyList:
         '''
         Returns True if there's an edge from node `src` to node `dst`.
         '''
-        log.info("TODO: find_edge()")
-        return False
+        if self.head().is_empty():
+            return False
+        if src == self.name():
+            return self.edges().find(dst)
+        else:
+            return self.tail().find_edge(src, dst)
+        
 
     def edge_cardinality(self):
         '''
         Returns the number of edges.
         '''
-        log.info("TODO: edge_cardinality()")
-        return 0
+        if self.head().is_empty():
+            return 0
+        else: 
+            return self.edges().cardinality() + self.tail().edge_cardinality()
 
     def self_loops(self):
         '''
         Returns the number of loops in this adjacency list.  Note that a loop is
         defined as a node that has an edge towards itself, e.g., A->A.
         '''
-        log.info("TODO: self_loops()")
-        return 0
+        if self.head().is_empty():
+            return 0
+        else:
+            if self.edges().find(self.name()) == True:
+                return 1 + self.tail().self_loops()
+            
+            else:
+                return self.tail().self_loops()
+
 
     def adjacency_matrix(self):
         '''
@@ -283,8 +305,41 @@ class AdjacencyList:
         # In case you'd like to create an inf-initialized n x n matrix
         n = self.node_cardinality()
         matrix = [ [inf]*n for i in range(n) ]
-        log.info("TODO: adjacency_matrix()")
+        
+        nodeList = self.getNames()
+        tempNode = self.head()
+        count = 0
+        
+        while not tempNode.is_empty():
+            tempEdge = tempNode.edges()
+            for i in range(n):
+                if not tempEdge.is_empty():
+                    if tempEdge.dst() == nodeList[i]:
+                        matrix[count][i] = tempEdge.weight()
+                        tempEdge = tempEdge.tail()
+                        
+                else:
+                    break
+                
+            tempNode = tempNode.tail()
+            count += 1
+            
         return matrix
+    
+    
+    
+    #Help method
+    def getNames(self):
+        
+        nodeList = []
+        tempNode = self.head()
+        
+        while not tempNode.is_empty():
+            nodeList.append(tempNode.name())
+            tempNode = tempNode.tail()
+        return nodeList
+    
+    
 
     def list_nodes(self):
         '''
@@ -385,8 +440,30 @@ class Edge:
 
         Returns an edge head.
         '''
-        log.info("TODO: add()")
-        return self.head()
+        
+        #When the edge head is empty
+        if self.head().is_empty():
+            self.set_dst(dst)
+            self.set_weight(weight)
+            self._tail = Edge()
+            return self.head()
+        
+        #when edge exists, only update weight
+        elif self.dst() == dst:
+            self.set_weight(weight)
+            return self.head()
+        
+        #when dst is lower than edge
+        elif dst < self.dst():
+            new = Edge(dst, weight)
+            new._tail = self.head()
+            return new.head()
+        
+        #else if it is higher than edge
+        else:
+            return self.cons(self.tail().add(dst, weight))
+        
+       
 
     def delete(self, dst):
         '''
@@ -401,16 +478,22 @@ class Edge:
         '''
         Returns True if there is an edge towards `dst` in this sequence.
         '''
-        log.info("TODO: edge find()")
-        return False
+        if self.dst() is None:
+            return False
+        elif self.dst() == dst:
+            return True
+        else:
+            return self.tail().find(dst)
 
     def cardinality(self):
         '''
         Returns the number of edges in this sequence.
         '''
-        log.info("TODO: edge cardinality()")
-        return 0
-
+        if self.head().is_empty():
+            return 0
+        else:
+            return (1 + self.tail().cardinality())
+        
     def list(self, src):
         '''
         Returns a list of edges in lexicographical order, e.g., if `src`
