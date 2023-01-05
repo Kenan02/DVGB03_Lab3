@@ -214,9 +214,9 @@ class AdjacencyList:
             return self.head()
         
         if self.name() == src:
-            self.set_edge(self.edges().delete(dst))
+            self.set_edges(self.edges().delete(dst))
             
-        elif self.name() < src:
+        elif src > self.name():
             self.tail().delete_edge(src, dst)
             
         return self.head()
@@ -227,9 +227,11 @@ class AdjacencyList:
 
         Returns an adjacency list head.
         '''
-        if not self.head().is_empty():
+        if self.head().is_empty():
+            return self.head()
+        else:
             self.set_edges(self.edges().delete(name))
-            self.tail().delete_edge(name)
+            self.tail().delete_edges(name)
         return self.head()
 
     def find_edge(self, src, dst):
@@ -359,6 +361,54 @@ class AdjacencyList:
             return []
         return self.head().edges().list(self.head().name()) +\
             self.tail().list_edges()
+            
+            
+            
+#HELP FUNCTIONS
+    
+    def ListOfNodes(self):
+        '''
+        pre: self is a node
+        post: returns list of nodes, not the values only
+        '''
+        nodeHeads = []
+        tmpNode = self.head()
+        
+        while not tmpNode.is_empty():
+            nodeHeads.append(tmpNode.head())
+            tmpNode = tmpNode.tail()
+        return nodeHeads
+    
+    def ListOfEdges(self):
+        '''
+        pre: self is a edge
+        post: returns a list of edges not just the value
+        '''
+        
+        EdgeList = []
+        tmpEdge = self.edges()
+        
+        while not tmpEdge.is_empty():
+            EdgeList.append(tmpEdge.head())
+            tmpEdge = tmpEdge.tail()
+            
+        return EdgeList   
+    
+    def getNode(self, name):
+        '''
+        returns node if the node with the name "name" is a member
+    
+        '''
+        
+        if self.is_empty():
+            return 0
+        if name == self.head().name():
+            return self.head()
+        return self.tail().getNode(name)
+             
+    
+    
+#HELP FUNCTIONS
 
 class Edge:
     '''
