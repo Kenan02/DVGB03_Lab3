@@ -514,15 +514,18 @@ class Edge:
             return self.cons(self.tail().add(dst, weight))
         
        
-
     def delete(self, dst):
         '''
         Deletes the edge that goes towards `dst` if it exists.
 
         Returns an edge head.
         '''
-        log.info("TODO: delete()")
-        return self.head()
+        if self.is_empty():
+            return self.head()
+        if self.dst() == dst:
+            return self.tail()
+        elif dst > self.dst():
+            return self.cons(self.tail().delete(dst))
 
     def find(self, dst):
         '''
