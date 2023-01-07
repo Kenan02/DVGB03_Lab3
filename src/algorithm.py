@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#LABB GJORD AV KENAN SAHINOVIC & OLIVER RANER
 
 import sys
 import logging
@@ -88,7 +89,6 @@ def dijkstra(adjlist, start_node):
     d: [ None, 1, 2]
     e: [ None, 'a', 'a' ]
     '''
-    log.info("TODO: dijkstra()")
     d = [None] * adjlist.node_cardinality()
     e = [None] * adjlist.node_cardinality()
     

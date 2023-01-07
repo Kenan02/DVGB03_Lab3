@@ -8,6 +8,8 @@
 # 3) AdjacencyList.find_edge, Edge.find
 #
 
+#LABB GJORD AV KENAN SAHINOVIC & OLIVER RANER
+
 import sys
 import logging
 
@@ -524,8 +526,7 @@ class Edge:
             return self.head()
         if self.dst() == dst:
             return self.tail()
-        elif dst > self.dst():
-            return self.cons(self.tail().delete(dst))
+        return self.cons(self.tail().delete(dst))
 
     def find(self, dst):
         '''
